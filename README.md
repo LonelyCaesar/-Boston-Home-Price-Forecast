@@ -111,9 +111,18 @@ for i, col in enumerate(features):
 ![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/c42e70d6-7e0b-4eb2-9f84-697382a6467a)
 
 左圖：(RM與MEDV)住宅的平均房間數與房子的中位數價格產生了正向關係，也就是說平數越多價錢就會變高，看個人需求而自行決定。 右圖：(LSTAT與MEDV)人口數量與房子的中位數價格產生了負向關係，人口大於房子數量就會影響了遮風避雨無家可歸的現象發生。
-
-
-
+### 3.	產生模型的重要性：
+使用13個特徵產生出多張的模型，此模型會跟上述熱度圖很類似，因為執行要一點時間就挑選前幾個特徵做執行，再讀取前8筆的資料訓練出來的模型去預測。
+### 程式碼：
+```python
+sns.set()
+cols = ['crim','zn','indus','chas','nox','rm','age','dis']
+sns.pairplot(df_data[cols], size = 2.5)
+plt.show()
+```
+### 執行結果：
+執行結果為特徵圖與直條圖，與上述熱度圖的範疇。
+![download](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/18ffbc4b-efde-4966-9d53-964f6c41f058)
 
 
 
