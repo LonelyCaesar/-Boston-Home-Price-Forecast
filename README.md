@@ -44,3 +44,81 @@ display(df_test.head(5))
 df_data = df_train.append(df_test)
 df_data
 ```
+### 執行結果：
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/4ecb9a67-ce6f-4f68-a653-f0e3c7233247)
+
+合併後訓練測試集總共有506筆資料、15個特徵欄位，做出一致性的預測分析及模型訓練就會比較快速好理解。
+### 2.線性迴歸
+首先，要使用簡單的資料視覺來看一下細部資料之間的關係，用MEDV房價變數做分佈的線性迴歸常態預測。
+### 程式碼：
+```python
+boston = pd.DataFrame(boston_dataset.data,
+                     columns=boston_dataset.feature_names)
+boston['MEDV'] = boston_dataset.target
+sns.distplot(boston['MEDV'], bins=30)
+```
+### 執行結果：
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/72c9485b-4cfd-4ca0-bf77-4344c20315da)
+
+接者我們可以看每個變數之間的關係，透過相關係數觀察特徵變數和目標變數有較高的關聯性。
+### 程式碼：
+```python
+#使用熱度圖產生模型圖
+correlation_matrix = boston.corr().round(2)
+plt.figure(figsize=(15,9))
+sns.heatmap(correlation_matrix, annot=True)
+```
+### 執行結果：
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/ebfbf89d-dcac-4cb5-a474-7adeaa6bda2e)
+
+使用LSTAT和RM來做出預測MEDV的模型。用下列的算數及預測圖將關係數值給分析出來，可以明顯看到兩者之間的關係會是怎麼樣。
+### 程式碼：
+```python
+X = boston.loc[:,"RM":"LSTAT"].values
+Y = boston.MEDV
+x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=9487)
+regr = LinearRegression()
+regr.fit(x_train, y_train)
+y_pred = regr.predict(x_test)
+mse = metrics.mean_squared_error(y_test, y_pred)
+mae = metrics.mean_absolute_error(y_test, y_pred)
+r2 = metrics.r2_score(y_test, y_pred)
+
+print("MAE =","%.4f" % mae)
+print("MSE =","%.4f" % mse)
+print("R2 =","%.4f" % r2)
+```
+### 執行結果：
+列印出來的模型的平均絕對物誤差3.5028、均方誤差26.4660、判定係數為得到的平均於71%，代表它的分析程度是相當好的。
+### 程式碼：
+```python
+# 設定整張圖的長寬
+plt.figure(figsize=(20, 5))
+features = ["RM","LSTAT"]
+target = boston['MEDV']
+for i, col in enumerate(features):
+# 排版1 row, 2 columns, nth plot：在jupyter notebook上兩張並排 
+ plt.subplot(1, len(features) , i+1)
+ # add data column into plot
+ x = boston[col]
+ y = target
+ plt.scatter(x, y, marker='o')
+ plt.title(col)
+ plt.xlabel(col)
+ plt.ylabel('MEDV')
+```
+### 執行結果：
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/c42e70d6-7e0b-4eb2-9f84-697382a6467a)
+
+左圖：(RM與MEDV)住宅的平均房間數與房子的中位數價格產生了正向關係，也就是說平數越多價錢就會變高，看個人需求而自行決定。 右圖：(LSTAT與MEDV)人口數量與房子的中位數價格產生了負向關係，人口大於房子數量就會影響了遮風避雨無家可歸的現象發生。
+
+
+
+
+
+
+
+
+
+
+
