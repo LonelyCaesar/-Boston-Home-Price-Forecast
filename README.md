@@ -124,10 +124,92 @@ plt.show()
 執行結果為特徵圖與直條圖，與上述熱度圖的範疇。
 ![download](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/18ffbc4b-efde-4966-9d53-964f6c41f058)
 
+### 程式碼：
+```python
+boston = load_boston()
+df = pd.DataFrame(data=boston.data, 
+                  columns=boston.feature_names)
+df['MEDV'] = boston.target
 
+# MEDV即預測目標向量
+X = df.iloc[:, :-1]
+y = df['MEDV']
+X.head(5)
+```
+### 執行結果：
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/b20a9fce-d749-43ef-88d4-aa971c3161a6)
 
+將13特徵合併成一張斜線圖與點點圖。
+### 程式碼：
+```python
+x = data.data # 13個特徵的數據
+y = data.target # 房價數據
 
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.3, random_state = 1) # 將數據分成73比
+lnregr = LinearRegression()
+lnregr.fit(x_train, y_train) # 將資料拿去訓練
 
+y_predict = lnregr.predict(x_test) # 北test的資料用訓練出來的模型去預測
 
+plt.xlabel("actual price") # x軸的標題
+plt.ylabel("predict pcice") # y軸的標題
+plt.plot([0,50], [0,50]) # 劃一條基準線
+plt.scatter(y_test, y_predict) # 比對預測跟實際的差別
+plt.show() # 察看結果
+lnregr.score(x_train, y_train)
+```
+### 執行結果：
+為0.7103879080674731
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/8c44e303-056a-475e-ba23-99308f37f961)
 
+執行後訓練出來的特徵數值維71%，預測值機率只有7成，難以預測房價的特性狀況，換個其他資料做預測依然還是大同小異。
+### 4.	PCA降維：
+訓練測試集總共有506筆資料、15個特徵欄位，使用的數據量會不足，因此我們使用降維方式做出線性圖模型。
+### 程式碼：
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn import decomposition
 
+x = data.data # pca降維後的數據
+y = data.target # 房價數據
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.3, random_state = 1) # 將數據分成73比
+
+# Standarize our training data
+std_tool = StandardScaler()
+std_tool.fit(x_train)
+x_train = std_tool.transform(x_train)
+
+# PC降維
+pca = decomposition.PCA(n_components=0.95)
+pca.fit(x_train)
+x_train = pca.transform(x_train)
+lnregr = LinearRegression()
+lnregr.fit(x_train, y_train) # 將資料拿去訓練
+
+# Standarize x_test
+x_test = std_tool.transform(x_test)
+
+# Dimension reduction usng PCA
+x_test = pca.transform(x_test)
+y_predict = lnregr.predict(x_test) # 將test的資料用訓練出來的模型去預測
+
+plt.xlabel("actual price") # x軸的標題
+plt.ylabel("predict pcice") # y軸的標題
+plt.plot([0,50], [0,50]) # 劃一條基準線
+plt.scatter(y_test, y_predict) # 比對預測跟實際的差別
+plt.show() # 察看結果
+lnregr.score(x_train, y_train) # 訓練模型的正確率
+```
+### 執行結果：
+為0.6649582793264731
+![image](https://github.com/LonelyCaesar/-Boston-Home-Price-Forecast/assets/101235367/b430f20f-5891-4310-85f5-a3c9c658ea8b)
+
+PCA降維所訓練出來得到的為67%，由此可知低，於了上述的訓練出的模型，解釋程度能說是相當好的。
+### 程式碼：
+```python
+submit.to_csv( 'New_SampleSubmission1.csv', index=False )
+print( f'預測結果：' )
+submit.head(20)
+```
+產生後儲存為資料表後上傳至Kaggle的Submit Predictions，然後按Submit就完成了此競賽項目。
